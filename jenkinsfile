@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('checkout') {
+            steps {
+                sh ' checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'mahender', url: 'https://github.com/mahi49/mypractice.git']]])'
+            }
+        }
+       
+        stage('validate ') {
+            steps {
+                sh 'mvn validate '
+            }
+        }
+          stage('compile_code ') {
+            steps {
+                sh 'mvn compile_code '
+            }
+        }
+          stage('test') {
+            steps {
+                sh 'mvn test '
+            }
+        }
+          stage('package  ') {
+            steps {
+                sh 'mvn package  '
+            }
+        }
+          stage('clean ') {
+            steps {
+                sh ' 'clean' '
+            }
+        }
+          stage('install ') {
+            steps {
+                sh 'mvn install '
+            }
+        }
+          stage('pwd ') {
+            steps {
+                 pwd()
+            }
+        }
+          stage('deploy ') {
+            steps {
+            sh 'deploy'
+            }
+        }
+         stage('deploy ') {
+            steps {
+            sh 'deploy'
+            }
+        }
+          stage('deploy ') {
+            steps {
+            sshagent(['tomcat-USER']) {
+                sh  scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspacee/pipeline-project2/maven-web-application.war ubuntu@3.91.62.183:/opt/apache-tomcat-9.0.59 /webapps'
+            }
+            }
+        }
+    }
+}
